@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZionLife Bible Quiz App</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1d0936, #4b1248, #f0426b);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      padding: 20px;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Main Card Container */
+    .app-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(15px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 30px;
+      max-width: 650px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Header & Animated Titles */
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f;
+      letter-spacing: 1px;
+    }
+
+    .creator-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 6px 16px;
+      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(229, 46, 113, 0.4);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Floating Pop-Up Banner */
+    .popup-banner {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffea00;
+      color: #000;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: popDown 8s ease-in-out infinite;
+      z-index: 10;
+      white-space: nowrap;
+    }
+
+    @keyframes popDown {
+      0%, 80%, 100% { top: -60px; }
+      15%, 65% { top: 12px; }
+    }
+
+    /* Stage Badge */
+    .stage-badge {
+      display: inline-block;
+      background: #00f2fe;
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    /* Start Screen */
+    .start-screen {
+      text-align: center;
+      padding: 20px 10px;
+    }
+
+    .start-screen h2 {
+      font-size: 1.8rem;
+      color: #00f2fe;
+      margin-bottom: 15px;
+    }
+
+    .info-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: left;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .info-box li {
+      margin-bottom: 10px;
+      list-style-type: none;
+      font-size: 1rem;
+    }
+
+    .start-btn {
+      background: linear-gradient(90deg, #00ff87, #60efff);
+      color: #000;
+      padding: 16px 40px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 255, 135, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(0, 255, 135, 0.8);
+    }
+
+    /* Timer Bar & Info */
+    .timer-badge {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #00f2fe;
+      color: #00f2fe;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+    }
+
+    .progress-container {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      height: 10px;
+      width: 100%;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #00f2fe, #4facfe);
+      height: 100%;
+      width: 1%;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-info {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #ffe600;
+    }
+
+    /* Question & Options */
+    .quiz-screen {
+      display: none;
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      min-height: 50px;
+    }
+
+    .options-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .option-btn:hover:not([disabled]) {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Option Feedback States */
+    .option-btn.correct {
+      background: #00e676 !important;
+      border-color: #ffffff !important;
+      color: #000 !important;
+      font-weight: bold;
+      box-shadow: 0 0 12px #00e676;
+    }
+
+    .option-btn.wrong {
+      background: #ff1744 !important;
+      border-color: #ffffff !important;
+      color: #fff !important;
+      box-shadow: 0 0 12px #ff1744;
+    }
+
+    /* Navigation & Submit Buttons */
+    .nav-btns {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: transform 0.2s ease;
+    }
+
+    .btn:active { transform: scale(0.95); }
+
+    .btn-prev { background: rgba(255, 255, 255, 0.2); color: #fff; }
+    .btn-next { background: #00f2fe; color: #000; }
+    .btn-submit { background: #00ff87; color: #000; }
+
+    /* Score Screen */
+    .score-screen {
+      text-align: center;
+      display: none;
+    }
+
+    .score-badge {
+      font-size: 3.8rem;
+      font-weight: 900;
+      color: #ffe600;
+      text-shadow: 0 0 20px rgba(255, 230, 0, 0.6);
+      margin: 15px 0;
+    }
+
+    .action-btn {
+      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      color: #fff;
+      padding: 14px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 10px 5px 0 5px;
+    }
+
+    .stage2-btn {
+      background: linear-gradient(90deg, #00ff87, #00f2fe);
+      color: #000;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .app-card {
+        padding: 20px 15px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .question-text {
+        font-size: 1.05rem;
+      }
+      .btn {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-card">
+    <!-- Pop-Up Header -->
+    <div class="popup-banner">✨📖BY EVANG.THANKGOD OKODUWA📖✨</div>
+
+    <header>
+      <h1>ZIONLIFE BIBLE QUIZ</h1>
+      <div class="creator-badge"> EVANG.THANKGOD OKODUWA</div>
+    </header>
+
+    <!-- Start / Landing Screen -->
+    <div class="start-screen" id="start-screen">
+      <h2>Welcome to the Quiz!</h2>
+      <div class="info-box">
+        <ul>
+          <li>📖 <strong>Stage 1:</strong> 100 Fundamental Bible Questions (30 Mins).</li>
+          <li>🔥 <strong>Stage 2:</strong> 100 Advanced Mastery Questions (30 Mins).</li>
+          <li>⏱ <strong>Timed Challenges:</strong> Test your depth and speed in the Scriptures.</li>
+          <li>🚀 <strong>Click Submit</strong> at any time to complete your test.</li>
+          <li>😄 <strong>Share, compete and have fun</strong> with someone today.</li>
+          <li>🖥 <strong>Screenshot and send</strong> your score to: <strong>+234-901-366-7552</strong></li>
+        </ul>
+      </div>
+      <button class="start-btn" onclick="startQuiz(1)">START STAGE 1</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="quiz-screen" id="quiz-screen">
+      <div style="text-align: center; margin-bottom: 10px;">
+        <span class="stage-badge" id="current-stage-tag">STAGE 1</span>
+      </div>
+      <div class="timer-badge" id="timer-display">⏱ Time Remaining: 30:00</div>
+
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="quiz-info">
+        <span id="question-count">Question 1 of 100</span>
+        <span id="score-tracker">Score: 0</span>
+      </div>
+
+      <div class="question-text" id="question-text">Loading question...</div>
+
+      <div class="options-grid" id="options-container"></div>
+
+      <div class="nav-btns">
+        <button class="btn btn-prev" id="prev-btn" onclick="changeQuestion(-1)">Previous</button>
+        <button class="btn btn-submit" onclick="confirmSubmit()">Submit Quiz</button>
+        <button class="btn btn-next" id="next-btn" onclick="changeQuestion(1)">Next</button>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div class="score-screen" id="score-screen">
+      <h2 id="stage-result-title">Stage 1 Completed! 🎉</h2>
+      <p style="margin-top: 10px; font-size: 1.1rem;">Thank you for playing ZionLife Bible Quiz!</p>
+      
+      <div class="score-badge" id="final-score">0 / 100</div>
+
+      <p id="feedback-text" style="font-size: 1.2rem; font-weight: 600;"></p>
+      <p style="margin-top: 15px; color: #ffea00;">App Designed & Developed By <strong>EVANG.THANKGOD OKODUWA</strong></p>
+
+      <div id="action-buttons-container">
+        <button class="action-btn" onclick="restartQuiz()">Try Again</button>
+        <button class="action-btn stage2-btn" id="next-stage-btn" onclick="startQuiz(2)" style="display:none;">Proceed to Stage 2 🔥</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Raw Base Questions Bank - STAGE 1 (100 Questions)
+    const baseQuestionsStage1 = [
+      { q: "What is the first book of the Bible?", options: ["Exodus", "Genesis", "Leviticus", "Numbers"], answer: 1 },
+      { q: "Who built the Ark?", options: ["Moses", "Abraham", "Noah", "David"], answer: 2 },
+      { q: "How many days did God take to create the world?", options: ["5", "6", "7", "40"], answer: 1 },
+      { q: "Who was swallowed by a great fish?", options: ["Jonah", "Elijah", "Daniel", "Peter"], answer: 0 },
+      { q: "What is the shortest verse in the Bible?", options: ["Rejoice always", "Jesus wept", "Pray without ceasing", "God is love"], answer: 1 },
+      { q: "Who defeated Goliath with a sling and a stone?", options: ["Saul", "Solomon", "David", "Samson"], answer: 2 },
+      { q: "Where was Jesus born?", options: ["Nazareth", "Jerusalem", "Bethlehem", "Egypt"], answer: 2 },
+      { q: "How many apostles did Jesus have?", options: ["10", "12", "70", "14"], answer: 1 },
+      { q: "Who received the Ten Commandments on Mount Sinai?", options: ["Aaron", "Joshua", "Moses", "Elijah"], answer: 2 },
+      { q: "What is the last book of the New Testament?", options: ["Acts", "Jude", "Hebrews", "Revelation"], answer: 3 },
+      { q: "Who was the first man created?", options: ["Seth", "Adam", "Cain", "Abel"], answer: 1 },
+      { q: "Who was Abraham's wife?", options: ["Rebekah", "Rachel", "Sarah", "Leah"], answer: 2 },
+      { q: "What sea did Moses part?", options: ["Dead Sea", "Red Sea", "Sea of Galilee", "Mediterranean Sea"], answer: 1 },
+      { q: "Who was thrown into the lions' den?", options: ["Shadrach", "Daniel", "Jeremiah", "Ezekiel"], answer: 1 },
+      { q: "What is the longest book in the Bible?", options: ["Genesis", "Isaiah", "Psalms", "Jeremiah"], answer: 2 },
+      { q: "Who betrayed Jesus for 30 pieces of silver?", options: ["Peter", "Judas Iscariot", "Thomas", "Pilate"], answer: 1 },
+      { q: "Which apostle denied Jesus three times?", options: ["John", "Andrew", "Peter", "Philip"], answer: 2 },
+      { q: "What food did God send from heaven to the Israelites?", options: ["Quail", "Manna", "Figs", "Bread"], answer: 1 },
+      { q: "Who was known as the 'Wise King'?", options: ["David", "Saul", "Solomon", "Hezekiah"], answer: 2 },
+      { q: "What river was Jesus baptized in?", options: ["Nile", "Tigris", "Euphrates", "Jordan"], answer: 3 },
+      { q: "Who was the mother of Jesus?", options: ["Martha", "Mary", "Elizabeth", "Salome"], answer: 1 },
+      { q: "Who was turned into a pillar of salt?", options: ["Job's wife", "Lot's wife", "Potiphar's wife", "Ruth"], answer: 1 },
+      { q: "How many books are in the Protestant Bible?", options: ["66", "72", "39", "27"], answer: 0 },
+      { q: "Who interpreted Pharaoh's dreams in Egypt?", options: ["Joseph", "Jacob", "Daniel", "Moses"], answer: 0 },
+      { q: "What was Paul's name before his conversion?", options: ["Silas", "Saul", "Stephen", "Simon"], answer: 1 },
+      { q: "Who possessed extraordinary physical strength from his hair?", options: ["Gideon", "Samson", "Barak", "Jephthah"], answer: 1 },
+      { q: "What garden did Adam and Eve live in?", options: ["Gethsemane", "Eden", "Carmel", "Zion"], answer: 1 },
+      { q: "What city's walls fell after Israelites marched around it?", options: ["Ai", "Jericho", "Babylon", "Nineveh"], answer: 1 },
+      { q: "Who was raised from the dead after four days?", options: ["Jairus' daughter", "Lazarus", "Tabitha", "Eutychus"], answer: 1 },
+      { q: "What is the first statement made by God in the Bible?", options: ["Be fruitful", "Let there be light", "Do not eat", "Love God"], answer: 1 },
+      { q: "Who was the oldest man mentioned in the Bible?", options: ["Methuselah", "Noah", "Adam", "Enoch"], answer: 0 },
+      { q: "Which prophet was taken to heaven in a whirlwind?", options: ["Elisha", "Elijah", "Isaiah", "Jeremiah"], answer: 1 },
+      { q: "Who wrote most of the New Testament epistles?", options: ["Peter", "John", "Paul", "James"], answer: 2 },
+      { q: "What instrument did David play?", options: ["Flute", "Harp/Lyre", "Trumpet", "Drums"], answer: 1 },
+      { q: "What city was Jonah sent to preach to?", options: ["Tarshish", "Nineveh", "Damascus", "Sodom"], answer: 1 },
+      { q: "Who was the first king of Israel?", options: ["David", "Solomon", "Saul", "Rehoboam"], answer: 2 },
+      { q: "What primary profession did Peter and Andrew have?", options: ["Tax collectors", "Fishermen", "Carpenters", "Tentmakers"], answer: 1 },
+      { q: "Where was Jesus crucified?", options: ["Mount of Olives", "Golgotha", "Mount Sinai", "Garden of Gethsemane"], answer: 1 },
+      { q: "What gift did King Solomon ask God for?", options: ["Wealth", "Wisdom", "Long life", "Victory"], answer: 1 },
+      { q: "Who was Ruth's mother-in-law?", options: ["Orpah", "Naomi", "Hannah", "Elizabeth"], answer: 1 },
+      { q: "How many plagues hit Egypt?", options: ["7", "10", "12", "40"], answer: 1 },
+      { q: "What wood was Noah's Ark made of?", options: ["Cedar", "Gopher wood", "Oak", "Acacia"], answer: 1 },
+      { q: "Who was the Roman governor who tried Jesus?", options: ["Herod", "Pontius Pilate", "Felix", "Festus"], answer: 1 },
+      { q: "Who was known as the 'Weeping Prophet'?", options: ["Isaiah", "Jeremiah", "Ezekiel", "Hosea"], answer: 1 },
+      { q: "On what day of creation were sun, moon, and stars made?", options: ["Day 1", "Day 3", "Day 4", "Day 6"], answer: 2 },
+      { q: "Who survived the fiery furnace with Shadrach and Meshach?", options: ["Abednego", "Daniel", "Darius", "Ezra"], answer: 0 },
+      { q: "Who was the father of John the Baptist?", options: ["Simeon", "Zechariah", "Joseph", "Nicodemus"], answer: 1 },
+      { q: "Which tribe of Israel served as priests?", options: ["Judah", "Levi", "Benjamin", "Ephraim"], answer: 1 },
+      { q: "What liquid was turned into wine at the wedding in Cana?", options: ["Milk", "Water", "Oil", "Honey"], answer: 1 },
+      { q: "Who saw a vision of a wheel within a wheel?", options: ["Isaiah", "Jeremiah", "Ezekiel", "Daniel"], answer: 2 },
+      { q: "What was Jesus' earthly father's profession?", options: ["Fisherman", "Carpenter", "Shepherd", "Mason"], answer: 1 },
+      { q: "Which Gospel was written by a doctor?", options: ["Matthew", "Mark", "Luke", "John"], answer: 2 },
+      { q: "How many books are in the Old Testament?", options: ["27", "39", "46", "66"], answer: 1 },
+      { q: "Who was the brother of Moses?", options: ["Aaron", "Hur", "Jethro", "Caleb"], answer: 0 },
+      { q: "Which city's believers were first called 'Christians'?", options: ["Jerusalem", "Antioch", "Rome", "Corinth"], answer: 1 },
+      { q: "Who climbed a sycamore tree to see Jesus?", options: ["Zacchaeus", "Matthew", "Bartimaeus", "Nicodemus"], answer: 0 },
+      { q: "What bird did Noah first send out of the Ark?", options: ["Dove", "Raven", "Eagle", "Sparrow"], answer: 1 },
+      { q: "Who killed Abel?", options: ["Seth", "Cain", "Enoch", "Lamech"], answer: 1 },
+      { q: "Where were the Ten Commandments stored?", options: ["Tabernacle", "Ark of the Covenant", "Temple of Solomon", "Golden Bowl"], answer: 1 },
+      { q: "What sign did God give Noah never to flood the earth again?", options: ["Fire", "Rainbow", "Cloud", "Star"], answer: 1 },
+      { q: "Who was the female judge of Israel?", options: ["Jael", "Deborah", "Miriam", "Huldah"], answer: 1 },
+      { q: "Who was Isaac's brother?", options: ["Esau", "Ishmael", "Jacob", "Joseph"], answer: 1 },
+      { q: "What weapon did Samson use to kill 1,000 Philistines?", options: ["Spear", "Jawbone of a donkey", "Sword", "Bow and arrow"], answer: 1 },
+      { q: "How many beatitudes are there in the Sermon on the Mount?", options: ["8", "10", "12", "7"], answer: 0 },
+      { q: "Who doubted Jesus' resurrection until he touched His wounds?", options: ["Peter", "Thomas", "Philip", "Bartholomew"], answer: 1 },
+      { q: "What was the name of the giant David fought?", options: ["Og", "Goliath", "Ishbi-Benob", "Saph"], answer: 1 },
+      { q: "Which book contains the verse 'The Lord is my shepherd'?", options: ["Proverbs", "Psalms", "Ecclesiastes", "Song of Solomon"], answer: 1 },
+      { q: "How many days and nights did Jesus fast in the wilderness?", options: ["7", "12", "40", "100"], answer: 2 },
+      { q: "Who bought Joseph as a slave in Egypt?", options: ["Pharaoh", "Potiphar", "Jethro", "Haman"], answer: 1 },
+      { q: "Which apostle was a tax collector?", options: ["Matthew", "John", "James", "Andrew"], answer: 0 },
+      { q: "What pestilence was NOT one of the 10 plagues of Egypt?", options: ["Frogs", "Locusts", "Famine", "Flies"], answer: 2 },
+      { q: "What was the tower built to reach heaven called?", options: ["Babylon", "Babel", "Shinar", "Sodom"], answer: 1 },
+      { q: "Who was Isaac's wife?", options: ["Rachel", "Rebekah", "Leah", "Bilhah"], answer: 1 },
+      { q: "Who anointed David as king?", options: ["Nathan", "Samuel", "Eli", "Elijah"], answer: 1 },
+      { q: "Who went to heaven in a chariot of fire?", options: ["Enoch", "Elijah", "Moses", "Elisha"], answer: 1 },
+      { q: "What language was the Old Testament predominantly written in?", options: ["Greek", "Hebrew", "Latin", "Aramaic"], answer: 1 },
+      { q: "What language was the New Testament originally written in?", options: ["Hebrew", "Greek", "Latin", "Aramaic"], answer: 1 },
+      { q: "Who was the husband of Mary, mother of Jesus?", options: ["Joseph", "Zechariah", "Simeon", "Jacob"], answer: 0 },
+      { q: "Which queen visited Solomon to test his wisdom?", options: ["Queen of Sheba", "Queen Esther", "Jezebel", "Candace"], answer: 0 },
+      { q: "What was Paul's trade/profession?", options: ["Fisherman", "Tentmaker", "Physician", "Blacksmith"], answer: 1 },
+      { q: "Who was saved from the flood along with his family?", options: ["Abraham", "Noah", "Lot", "Enoch"], answer: 1 },
+      { q: "Which apostle was exile on the island of Patmos?", options: ["Peter", "Paul", "John", "James"], answer: 2 },
+      { q: "What did John the Baptist eat in the wilderness?", options: ["Fish & Bread", "Locusts & Wild Honey", "Figs & Grapes", "Manna"], answer: 1 },
+      { q: "Who was the twin brother of Jacob?", options: ["Esau", "Joseph", "Benjamin", "Judah"], answer: 0 },
+      { q: "What was the name of the place where Jesus prayed before arrest?", options: ["Gethsemane", "Calvary", "Bethany", "Nazareth"], answer: 0 },
+      { q: "Who was the High Priest who tried Jesus?", options: ["Annas", "Caiaphas", "Gamaliel", "Nicodemus"], answer: 1 },
+      { q: "Which prophet was swallowed by a whale/fish?", options: ["Jonah", "Amos", "Hosea", "Micah"], answer: 0 },
+      { q: "Who became queen of Persia and saved her Jewish people?", options: ["Ruth", "Esther", "Vashti", "Deborah"], answer: 1 },
+      { q: "What armor of God shields from fiery darts?", options: ["Breastplate of Righteousness", "Shield of Faith", "Helmet of Salvation", "Belt of Truth"], answer: 1 },
+      { q: "How many days was Jesus in the tomb?", options: ["1", "3", "7", "40"], answer: 1 },
+      { q: "What was the name of Abraham's firstborn son?", options: ["Isaac", "Ishmael", "Jacob", "Esau"], answer: 1 },
+      { q: "Who wrote the Book of Acts?", options: ["Paul", "Luke", "Peter", "Mark"], answer: 1 },
+      { q: "What city was Paul traveling to when he saw the bright light?", options: ["Jerusalem", "Damascus", "Rome", "Antioch"], answer: 1 },
+      { q: "Who lost all his family, health, and wealth but stayed faithful?", options: ["Job", "Abraham", "Joseph", "David"], answer: 0 },
+      { q: "What fruit is NOT explicitly listed as a Fruit of the Spirit?", options: ["Love", "Joy", "Peace", "Power"], answer: 3 },
+      { q: "Who was Moses' successor to lead Israel into Canaan?", options: ["Caleb", "Joshua", "Gideon", "Aaron"], answer: 1 },
+      { q: "How many commandment stones did Moses bring down?", options: ["1", "2", "3", "10"], answer: 1 },
+      { q: "What happened on the day of Pentecost?", options: ["Crucifixion", "Holy Spirit came", "Resurrection", "Ascension"], answer: 1 },
+      { q: "What is the fruit of the Spirit that means endurance/patience?", options: ["Longsuffering", "Faithfulness", "Gentleness", "Goodness"], answer: 0 },
+      { q: "Who is the Alpha and Omega?", options: ["Moses", "Jesus Christ", "Paul", "Abraham"], answer: 1 }
+    ];
+
+    // STAGE 2: Advanced Mastery Questions (100 Stronger Bible Questions)
+    const baseQuestionsStage2 = [
+      { q: "What was the name of the high priest who met Abraham after his victory over the four kings?", options: ["Melchizedek", "Jethro", "Balaam", "Abiathar"], answer: 0 },
+      { q: "Which Old Testament prophet married an unfaithful woman named Gomer as a symbol of Israel?", options: ["Amos", "Hosea", "Micah", "Zechariah"], answer: 1 },
+      { q: "What was the name of the servant whose ear Peter cut off in the Garden of Gethsemane?", options: ["Malchus", "Tychicus", "Onesimus", "Alexander"], answer: 0 },
+      { q: "Which tribe of Israel received no territorial land inheritance, but rather cities to dwell in?", options: ["Benjamin", "Dan", "Levi", "Gad"], answer: 2 },
+      { q: "What was the original Hebrew name given to Joshua son of Nun before Moses renamed him?", options: ["Hoshea", "Caleb", "Elnathan", "Palti"], answer: 0 },
+      { q: "In Revelation, which church is called 'neither cold nor hot' but lukewarm?", options: ["Sardis", "Laodicea", "Philadelphia", "Pergamum"], answer: 1 },
+      { q: "Who was the left-handed judge of Israel who assassinated Eglon, king of Moab?", options: ["Ehud", "Othniel", "Shamgar", "Abimelech"], answer: 0 },
+      { q: "Which Persian king issued the decree allowing the Jewish exiles to return and rebuild the Temple?", options: ["Darius", "Xerxes", "Cyrus", "Artaxerxes"], answer: 2 },
+      { q: "What was the exact name of the island Paul was shipwrecked on in Acts 28?", options: ["Crete", "Malta", "Patmos", "Cyprus"], answer: 1 },
+      { q: "Who fell out of a third-story window and died while listening to Paul preach, but was raised up?", options: ["Eutychus", "Agabus", "Trophimus", "Gaius"], answer: 0 },
+      { q: "In Job, who was the youngest friend who spoke last, expressing anger at both Job and his three friends?", options: ["Eliphaz", "Bildad", "Zophar", "Elihu"], answer: 3 },
+      { q: "Which king of Judah had his life extended by 15 years after praying to God?", options: ["Josiah", "Hezekiah", "Uzziah", "Jehoshaphat"], answer: 1 },
+      { q: "In the Old Testament, who was struck dead for stretching out his hand to steady the Ark of the Covenant?", options: ["Uzzah", "Ahio", "Nadab", "Abihu"], answer: 0 },
+      { q: "What was the name of the place where Jacob wrestled with God and received a blessing?", options: ["Bethel", "Peniel", "Mahanaim", "Shechem"], answer: 1 },
+      { q: "Which king of Israel made two golden calves, setting one up in Bethel and the other in Dan?", options: ["Jeroboam I", "Rehoboam", "Ahab", "Omri"], answer: 0 },
+      { q: "Who was the queen of Judah who usurped the throne and tried to destroy the entire royal family?", options: ["Jezebel", "Athaliah", "Vashti", "Herodias"], answer: 1 },
+      { q: "What was the name of the Syrian army commander who was healed of leprosy after dipping in the Jordan?", options: ["Naaman", "Ben-Hadad", "Hazael", "Rezin"], answer: 0 },
+      { q: "Which prophet stood before King Ahab on Mount Carmel to confront 450 prophets of Baal?", options: ["Elisha", "Elijah", "Micaiah", "Nathan"], answer: 1 },
+      { q: "Who was the wife of Moses?", options: ["Zipporah", "Miriam", "Cushite", "Cipora"], answer: 0 },
+      { q: "In Acts, what husband and wife lied to the Holy Spirit about their property proceeds and dropped dead?", options: ["Aquila & Priscilla", "Ananias & Sapphira", "Felix & Drusilla", "Agrippa & Bernice"], answer: 1 },
+      { q: "Which book of the Old Testament does not explicitly mention the word 'God'?", options: ["Song of Solomon", "Esther", "Ecclesiastes", "Ruth"], answer: 1 },
+      { q: "What was the name of the mountain where Moses died after viewing the Promised Land?", options: ["Mount Horeb", "Mount Nebo", "Mount Carmel", "Mount Hermon"], answer: 1 },
+      { q: "Who was the Roman centurion in Caesarea who was the first Gentile convert through Peter's preaching?", options: ["Cornelius", "Julius", "Claudius Lysias", "Sergius Paulus"], answer: 0 },
+      { q: "In Genesis, who was the father of Melchizedek's lineage or Salem's founding line?", options: ["Shem", "Ham", "Japheth", "Canaan"], answer: 0 },
+      { q: "Which prophet saw a valley of dry bones coming back to life?", options: ["Jeremiah", "Daniel", "Ezekiel", "Joel"], answer: 2 },
+      { q: "What was the name of Abraham's second wife after Sarah died?", options: ["Hagar", "Keturah", "Bilhah", "Zilpah"], answer: 1 },
+      { q: "Which deacon was stoned to death, becoming the first recorded Christian martyr?", options: ["Philip", "Stephen", "Prochorus", "Nicanor"], answer: 1 },
+      { q: "Who was the king of Salem and priest of God Most High?", options: ["Melchizedek", "Aaron", "Eli", "Samuel"], answer: 0 },
+      { q: "In Paul's epistle to Philemon, who was the runaway slave Paul sent back with the letter?", options: ["Onesimus", "Epaphroditus", "Tychicus", "Archippus"], answer: 0 },
+      { q: "Who was the High Priest who condemned Jesus alongside Caiaphas and was his father-in-law?", options: ["Annas", "Gamaliel", "Alexander", "Tertullus"], answer: 0 },
+      { q: "Which king of Babylon lost his sanity and lived like a wild beast for seven years?", options: ["Belshazzar", "Nebuchadnezzar", "Evil-Merodach", "Nabonidus"], answer: 1 },
+      { q: "What metal made up the head of the great statue in Nebuchadnezzar's dream?", options: ["Silver", "Bronze", "Gold", "Iron"], answer: 2 },
+      { q: "In Genesis 14, who was Abraham's chief steward born in his house?", options: ["Eliezer of Damascus", "Potiphar", "Gihon", "Mamre"], answer: 0 },
+      { q: "Who was the prophetess that judged Israel beneath a palm tree between Ramah and Bethel?", options: ["Huldah", "Deborah", "Anna", "Miriam"], answer: 1 },
+      { q: "What was the name of the site where the tower was built when tongues were confused?", options: ["Shinar / Babel", "Ur", "Haran", "Erech"], answer: 0 },
+      { q: "Which disciple replaced Judas Iscariot after being chosen by lot in Acts 1?", options: ["Barsabbas", "Matthias", "Barnabas", "Silas"], answer: 1 },
+      { q: "What was the name of the city where Samson was kept in brass chains after Delilah betrayed him?", options: ["Gaza", "Ashkelon", "Ekron", "Ashdod"], answer: 0 },
+      { q: "Which Old Testament prophet was commanded to eat a scroll written with lamentations?", options: ["Jeremiah", "Ezekiel", "Isaiah", "Zechariah"], answer: 1 },
+      { q: "Who was the mother of Solomon?", options: ["Bathsheba", "Abigail", "Michal", "Maacah"], answer: 0 },
+      { q: "What was the name of the sea of bronze placed in Solomon's Temple for priest ritual washings?", options: ["Laver of brass", "Molten Sea", "Brazen Basin", "Holy Reservoir"], answer: 1 },
+      { q: "Who was the prophet that confronted King David over his sin with Bathsheba?", options: ["Nathan", "Gad", "Samuel", "Ahijah"], answer: 0 },
+      { q: "What was the name of the town where Jesus raised a widow's only son from the dead?", options: ["Nain", "Capernaum", "Bethsaida", "Chorazin"], answer: 0 },
+      { q: "Which tribe was famous for having 700 chosen left-handed slingers who didn't miss a hair's breadth?", options: ["Judah", "Benjamin", "Ephraim", "Dan"], answer: 1 },
+      { q: "Who was Paul's mentor and teacher in Jewish law in Jerusalem?", options: ["Nicodemus", "Gamaliel", "Shammai", "Hillel"], answer: 1 },
+      { q: "What were the names of the two sons of Joseph born in Egypt?", options: ["Ephraim & Manasseh", "Gershom & Eliezer", "Nadab & Abihu", "Pharez & Zerah"], answer: 0 },
+      { q: "Which king tore his clothes and repented when the Book of the Law was discovered in the Temple?", options: ["Josiah", "Hezekiah", "Asa", "Joash"], answer: 0 },
+      { q: "What town was the home of Mary, Martha, and Lazarus?", options: ["Bethany", "Bethphage", "Emmaus", "Jericho"], answer: 0 },
+      { q: "Who was the Silversmith in Ephesus who started a riot against Paul?", options: ["Demetrius", "Alexander", "Gallio", "Erastus"], answer: 0 },
+      { q: "Which Old Testament book ends with the question 'And should I not have concern for the great city of Nineveh?'", options: ["Jonah", "Nahum", "Zephaniah", "Habakkuk"], answer: 0 },
+      { q: "What is the longest chapter in the entire Bible?", options: ["Psalm 23", "Psalm 119", "Isaiah 53", "Genesis 1"], answer: 1 },
+      { q: "What was the name of Moses' sister who struck with leprosy for questioning his leadership?", options: ["Miriam", "Zipporah", "Deborah", "Coebi"], answer: 0 },
+      { q: "Which judge vowed to sacrifice whatever came out of his house first if God gave him victory?", options: ["Jephthah", "Gideon", "Samson", "Barak"], answer: 0 },
+      { q: "In Revelation, how many elders sit on thrones surrounding the main throne of God?", options: ["12", "24", "70", "144"], answer: 1 },
+      { q: "Who was the king of Moab who hired Balaam to curse the children of Israel?", options: ["Balak", "Og", "Sihon", "Eglon"], answer: 0 },
+      { q: "Which king of Israel was killed by an arrow shot at random between the joints of his armor?", options: ["Ahab", "Jehoram", "Ahaziah", "Jeroboam II"], answer: 0 },
+      { q: "In the Gospel of Mark, who was compelled to carry the cross of Jesus?", options: ["Simon of Cyrene", "Joseph of Arimathea", "Nicodemus", "Lucius"], answer: 0 },
+      { q: "What was the name of the place where Abraham was prepared to sacrifice Isaac?", options: ["Mount Moriah", "Mount Sinai", "Mount Horeb", "Mount Nebo"], answer: 0 },
+      { q: "Which OT prophet took a linen belt and hid it in a crevice in the rocks at the Euphrates?", options: ["Jeremiah", "Isaiah", "Hosea", "Ezekiel"], answer: 0 },
+      { q: "What was the name of David's eldest son who was assassinated by Absalom's servants?", options: ["Amnon", "Chileab", "Adonijah", "Shephatiah"], answer: 0 },
+      { q: "Who was the sorcerer in Paphos blinded by Paul for opposing the faith?", options: ["Elymas (Bar-Jesus)", "Simon Magus", "Sceva", "Demas"], answer: 0 },
+      { q: "Which Old Testament book contains the prophecy: 'The virgin will conceive and give birth to a son'?", options: ["Isaiah", "Jeremiah", "Micah", "Malachi"], answer: 0 },
+      { q: "What was the name of the well where Jesus met the Samaritan woman?", options: ["Jacob's Well", "Beer-sheba", "Marah", "Elim"], answer: 0 },
+      { q: "Who was the High Priest who Samuel served under at Shiloh as a young boy?", options: ["Eli", "Phinehas", "Hophni", "Abiathar"], answer: 0 },
+      { q: "Which king cut up Jeremiah's prophetic scroll with a penknife and threw it into the fire?", options: ["Jehoiachin", "Jehoiakim", "Zedekiah", "Manasseh"], answer: 1 },
+      { q: "What was the name of the valley where David slew Goliath?", options: ["Valley of Elah", "Valley of Jezreel", "Valley of Achor", "Valley of Rephaim"], answer: 0 },
+      { q: "Who was the companion of Paul sent to Crete to set in order the things that were lacking?", options: ["Titus", "Timothy", "Silas", "Luke"], answer: 0 },
+      { q: "Which tribe of Israel was wiped down to 600 men during a civil war in Judges?", options: ["Benjamin", "Dan", "Simeon", "Reuben"], answer: 0 },
+      { q: "What was the name of the prophet who told Jeroboam he would reign over 10 tribes using a torn garment?", options: ["Ahijah the Shilonite", "Shemaiah", "Micaiah", "Iddo"], answer: 0 },
+      { q: "Which apostle was struck dead with a sword by King Herod Agrippa I in Acts 12?", options: ["James brother of John", "Peter", "Andrew", "Philip"], answer: 0 },
+      { q: "In Genesis, who was the first builder of a city, named after his son Enoch?", options: ["Cain", "Nimrod", "Lamech", "Seth"], answer: 0 },
+      { q: "Who was the seller of purple fabrics from the city of Thyatira who hosted Paul?", options: ["Lydia", "Phoebe", "Priscilla", "Chloe"], answer: 0 },
+      { q: "Which prophet had a vision of four living creatures with four faces (human, lion, ox, eagle)?", options: ["Ezekiel", "Daniel", "Zechariah", "Habakkuk"], answer: 0 },
+      { q: "What was the name of Saul's daughter who was David's first wife and despised his dancing?", options: ["Michal", "Merab", "Rizpah", "Tamar"], answer: 0 },
+      { q: "In Revelation, what is the name of the angel of the bottomless pit in Hebrew?", options: ["Abaddon", "Apollyon", "Beelzebub", "Lucifer"], answer: 0 },
+      { q: "Which king of Israel established Samaria as the capital city of the northern kingdom?", options: ["Omri", "Baasha", "Ahab", "Jehu"], answer: 0 },
+      { q: "Who was the wealthy man of Arimathea who asked Pilate for the body of Jesus?", options: ["Joseph", "Nicodemus", "Simon", "Gamaliel"], answer: 0 },
+      { q: "What was the name of Hosea's daughter whose name means 'not pitied / no mercy'?", options: ["Lo-Ruhamah", "Lo-Ammi", "Jezreel", "Gomer"], answer: 0 },
+      { q: "In Acts 17, at what famous hill in Athens did Paul deliver his sermon about the 'Unknown God'?", options: ["Areopagus / Mars Hill", "Mount Zion", "Acropolis", "Mount Olives"], answer: 0 },
+      { q: "Which king made a decree that anyone praying to any god or man except him for 30 days be thrown to lions?", options: ["Darius", "Cyrus", "Artaxerxes", "Nebuchadnezzar"], answer: 0 },
+      { q: "Who was the mother of Samuel who prayed in the tabernacle with her lips moving silently?", options: ["Hannah", "Peninnah", "Elizabeth", "Ruth"], answer: 0 },
+      { q: "What was the name of the prophet who rebuked King Asa for relying on the King of Syria instead of God?", options: ["Hanani", "Jehu", "Eliezer", "Azariah"], answer: 0 },
+      { q: "In 2 Kings, who was the commander who executed Jezebel and wiped out the house of Ahab?", options: ["Jehu", "Pekah", "Shallum", "Menahem"], answer: 0 },
+      { q: "What were the names of the two pillars set up in front of Solomon's Temple porch?", options: ["Jachin & Boaz", "Urim & Thummim", "Ichabod & Ebenezer", "Alpha & Omega"], answer: 0 },
+      { q: "Which Old Testament prophet predicted Bethlehem as the precise birthplace of the Messiah?", options: ["Micah", "Malachi", "Haggai", "Zephaniah"], answer: 0 },
+      { q: "Who was the physician and companion who stayed with Paul during his final imprisonment in Rome?", options: ["Luke", "Mark", "Demas", "Tychicus"], answer: 0 },
+      { q: "What was the name of the place where Moses struck the rock twice in anger to produce water?", options: ["Meribah / Kadesh", "Marah", "Rephidim", "Shittim"], answer: 0 },
+      { q: "Who was the father of King Saul?", options: ["Kish", "Abner", "Ner", "Gibeon"], answer: 0 },
+      { q: "In Acts 20, where did Paul meet with the elders of the church of Ephesus to bid them farewell?", options: ["Miletus", "Troas", "Assos", "Cnidus"], answer: 0 },
+      { q: "Which OT prophet had a vision of a flying scroll measuring 20 cubits by 10 cubits?", options: ["Zechariah", "Haggai", "Malachi", "Obadiah"], answer: 0 },
+      { q: "What was the name of the servant girl who was so overjoyed to hear Peter's voice she forgot to open the gate?", options: ["Rhoda", "Dorcas", "Chloe", "Phoebe"], answer: 0 },
+      { q: "In Genesis, who was the nephew of Abraham who lived in Sodom?", options: ["Lot", "Nahor", "Haran", "Terah"], answer: 0 },
+      { q: "Which king of Israel built the ivory palace mentioned in 1 Kings 22?", options: ["Ahab", "Solomon", "Jeroboam II", "Baasha"], answer: 0 },
+      { q: "Who was the chief tax collector in Jericho who climbed a sycamore tree to see Jesus?", options: ["Zacchaeus", "Matthew", "Levi", "Theudas"], answer: 0 },
+      { q: "What was the name of David's loyal friend and son of King Saul?", options: ["Jonathan", "Ish-bosheth", "Mephibosheth", "Abner"], answer: 0 },
+      { q: "In Revelation, what precious stone makes up the first foundation layer of the New Jerusalem wall?", options: ["Jasper", "Sapphire", "Emerald", "Chrysolite"], answer: 0 },
+      { q: "Which prophet confronted King David with the parable of a poor man's single ewe lamb?", options: ["Nathan", "Gad", "Samuel", "Ahijah"], answer: 0 },
+      { q: "Who was the cousin and guardian of Queen Esther who refused to bow to Haman?", options: ["Mordecai", "Hagaii", "Memucan", "Heth"], answer: 0 },
+      { q: "What was the name of the mountain where Elijah challenged the prophets of Baal?", options: ["Mount Carmel", "Mount Sinai", "Mount Tabor", "Mount Hermon"], answer: 0 },
+      { q: "Which Old Testament book is written as a funeral dirge over the destruction of Jerusalem?", options: ["Lamentations", "Obadiah", "Habakkuk", "Joel"], answer: 0 },
+      { q: "What is the very last word of the Old Testament in the King James Bible?", options: ["Curse", "Amen", "Lord", "Israel"], answer: 0 }
+    ];
+
+    // Custom Creator Question
+    const creatorQuestion = {
+      q: "The 'ZIONLIFE BIBLE QUIZ APP' was developed by who?",
+      options: ["Elon Musk", "Mark Zuckerberg", "ThankGod Okoduwa", "Bill Gate"],
+      answer: 2
+    };
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let currentStage = 1;
+    let timeLeft = 30 * 60; // 30 mins
+    let timerInterval = null;
+
+    // Helper function to shuffle options and track the correct answer index
+    function shuffleOptions(item) {
+      const originalCorrectOption = item.options[item.answer];
+      let mappedOptions = item.options.map((opt) => opt);
+      
+      // Shuffle array
+      for (let i = mappedOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mappedOptions[i], mappedOptions[j]] = [mappedOptions[j], mappedOptions[i]];
+      }
+
+      // Find new index of the correct answer
+      const newAnswerIndex = mappedOptions.indexOf(originalCorrectOption);
+
+      return {
+        q: item.q,
+        options: mappedOptions,
+        answer: newAnswerIndex
+      };
+    }
+
+    // Start Quiz Execution for designated stage
+    function startQuiz(stage = 1) {
+      currentStage = stage;
+      
+      // Hide Start Screen / Score Screen & Show Quiz Screen
+      document.getElementById("start-screen").style.display = "none";
+      document.getElementById("score-screen").style.display = "none";
+      document.getElementById("quiz-screen").style.display = "block";
+
+      document.getElementById("current-stage-tag").innerText = `STAGE ${currentStage}`;
+
+      let baseArray = (currentStage === 1) ? baseQuestionsStage1 : baseQuestionsStage2;
+
+      // Both stages: 100 Questions, 30 Minutes
+      let shuffledBase = [...baseArray]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 99)
+        .map(q => shuffleOptions(q));
+
+      const shuffledCreatorQ = shuffleOptions(creatorQuestion);
+      const randomPos = Math.floor(Math.random() * 100);
+      shuffledBase.splice(randomPos, 0, shuffledCreatorQ);
+      
+      questions = shuffledBase;
+      timeLeft = 30 * 60; // 30 mins
+
+      userAnswers = new Array(questions.length).fill(null);
+      currentQuestionIndex = 0;
+
+      // Start Countdown Timer
+      startTimer();
+      showQuestion();
+    }
+
+    // Timer Implementation
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        document.getElementById("timer-display").innerText = 
+          `⏱ Time Remaining: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    // Display Current Question
+    function showQuestion() {
+      const qData = questions[currentQuestionIndex];
+      
+      document.getElementById("question-count").innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+      document.getElementById("question-text").innerText = `${currentQuestionIndex + 1}. ${qData.q}`;
+      
+      const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+      document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+
+      const optionsContainer = document.getElementById("options-container");
+      optionsContainer.innerHTML = "";
+
+      const selectedAns = userAnswers[currentQuestionIndex];
+
+      qData.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
+
+        // Feedback styling if user has already made a selection
+        if (selectedAns !== null) {
+          btn.disabled = true;
+          if (idx === qData.answer) {
+            btn.classList.add("correct");
+          } else if (idx === selectedAns) {
+            btn.classList.add("wrong");
+          }
+        } else {
+          btn.onclick = () => selectOption(idx);
+        }
+
+        optionsContainer.appendChild(btn);
+      });
+
+      // Handle Previous/Next Visibility
+      document.getElementById("prev-btn").style.visibility = currentQuestionIndex === 0 ? "hidden" : "visible";
+      document.getElementById("next-btn").style.visibility = currentQuestionIndex === questions.length - 1 ? "hidden" : "visible";
+
+      updateScoreTracker();
+    }
+
+    // Option Selection Logic
+    function selectOption(index) {
+      if (userAnswers[currentQuestionIndex] !== null) return;
+      userAnswers[currentQuestionIndex] = index;
+      showQuestion();
+    }
+
+    // Question Navigation
+    function changeQuestion(step) {
+      currentQuestionIndex += step;
+      showQuestion();
+    }
+
+    // Score Tracking
+    function updateScoreTracker() {
+      let score = 0;
+      userAnswers.forEach((ans, idx) => {
+        if (ans !== null && ans === questions[idx].answer) score++;
+      });
+      document.getElementById("score-tracker").innerText = `Score: ${score}`;
+    }
+
+    // Confirm Submission
+    function confirmSubmit() {
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      if (confirm(`You have answered ${answeredCount} of ${questions.length} questions in Stage ${currentStage}. Are you sure you want to submit now?`)) {
+        submitQuiz();
+      }
+    }
+
+    // Final Quiz Submission & Timer Stop
+    function submitQuiz() {
+      // STOP TIMER IMMEDIATELY
+      clearInterval(timerInterval);
+
+      let score = 0;
+      userAnswers.forEach((ans, idx) => {
+        if (ans === questions[idx].answer) score++;
+      });
+
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("score-screen").style.display = "block";
+
+      document.getElementById("stage-result-title").innerText = `Stage ${currentStage} Completed! 🎉`;
+      document.getElementById("final-score").innerText = `${score} / ${questions.length}`;
+
+      let feedback = "";
+      const percent = (score / questions.length) * 100;
+
+      if (currentStage === 1) {
+        if (percent >= 90) feedback = "🌟 Outstanding! You crushed Stage 1. You're ready for the Master Stage!";
+        else if (percent >= 70) feedback = "👏 Great job! Solid understanding of the Word!";
+        else if (percent >= 50) feedback = "👍 Good effort! Keep building your Bible knowledge!";
+        else feedback = "📖 Keep studying the Scriptures and give it another try!";
+
+        // Show stage 2 button
+        document.getElementById("next-stage-btn").style.display = "inline-block";
+      } else {
+        if (percent >= 90) feedback = "👑 UNSTOPPABLE! You are a Grandmaster Bible Scholar!";
+        else if (percent >= 70) feedback = "🔥 Impressive! Magnificent depth of scripture mastery!";
+        else if (percent >= 50) feedback = "⚡ Solid performance on these 100 deep-dive questions!";
+        else feedback = "📚 Stage 2 is tough! Re-read the deeper passages and try again!";
+
+        // Hide stage 2 button since stage 2 is complete
+        document.getElementById("next-stage-btn").style.display = "none";
+      }
+
+      document.getElementById("feedback-text").innerText = feedback;
+    }
+
+    // Restart Application back to start screen
+    function restartQuiz() {
+      document.getElementById("score-screen").style.display = "none";
+      document.getElementById("start-screen").style.display = "block";
+    }
+  </script>
+</body>
+</html>
