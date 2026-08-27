@@ -1,8 +1,8 @@
-PRAYER MACHINE END-USER LICENSE AGREEMENT (EULA)
+ZIONLIFE BIBLE QUIZ END-USER LICENSE AGREEMENT (EULA)
 
 Copyright © 2026 ThankGod Okoduwa. All Rights Reserved.
 
-Permission is hereby granted to any person obtaining a copy of this software (the "Prayer Machine") to use, run, and share the live application for personal, non-commercial, and devotional purposes only, subject to the following conditions:
+Permission is hereby granted to any person obtaining a copy of this software (the "ZIONLIFE BIBLE QUIZ") to use, run, and share the live application for personal, non-commercial, and devotional purposes only, subject to the following conditions:
 
 No Source Code Redistribution or Modification: You may not inspect, copy, modify, merge, publish, distribute, sublicense, or sell copies of the underlying source code (HTML, CSS, JavaScript) without express written permission from the author.
 
