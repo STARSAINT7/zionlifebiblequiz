@@ -112,10 +112,41 @@
       text-transform: uppercase;
     }
 
+    /* Input Controls */
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #00f2fe;
+      font-size: 1rem;
+    }
+
+    .name-input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .name-input:focus {
+      border-color: #00f2fe;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+    }
+
     /* Start Screen */
     .start-screen {
       text-align: center;
-      padding: 20px 10px;
+      padding: 10px 10px;
     }
 
     .start-screen h2 {
@@ -129,32 +160,51 @@
       border-radius: 16px;
       padding: 20px;
       text-align: left;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       border: 1px solid rgba(255,255,255,0.1);
     }
 
     .info-box li {
       margin-bottom: 10px;
       list-style-type: none;
-      font-size: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .mode-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
     }
 
     .start-btn {
       background: linear-gradient(90deg, #00ff87, #60efff);
       color: #000;
-      padding: 16px 40px;
+      padding: 14px 25px;
       border: none;
       border-radius: 30px;
-      font-size: 1.2rem;
+      font-size: 1.05rem;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 255, 135, 0.5);
+      box-shadow: 0 0 15px rgba(0, 255, 135, 0.4);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .start-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(0, 255, 135, 0.8);
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(0, 255, 135, 0.8);
+    }
+
+    .btn-stage2 {
+      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(229, 46, 113, 0.4);
+    }
+
+    .btn-both {
+      background: linear-gradient(90deg, #7f00ff, #e100ff);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(225, 0, 255, 0.4);
     }
 
     /* Timer Bar & Info */
@@ -278,7 +328,7 @@
     }
 
     .score-badge {
-      font-size: 3.8rem;
+      font-size: 3.5rem;
       font-weight: 900;
       color: #ffe600;
       text-shadow: 0 0 20px rgba(255, 230, 0, 0.6);
@@ -334,17 +384,26 @@
     <!-- Start / Landing Screen -->
     <div class="start-screen" id="start-screen">
       <h2>Welcome to the Quiz!</h2>
+      
+      <div class="input-group">
+        <label for="player-name">Enter Your Name:</label>
+        <input type="text" id="player-name" class="name-input" placeholder="e.g. Blessing Okoduwa" autocomplete="off">
+      </div>
+
       <div class="info-box">
         <ul>
-          <li>📖 <strong>Stage 1:</strong> 100 Fundamental Bible Questions (30 Mins).</li>
+          <li>📖 <strong>Stage 1:</strong> 100 Fundamental Questions (30 Mins).</li>
           <li>🔥 <strong>Stage 2:</strong> 100 Advanced Mastery Questions (30 Mins).</li>
-          <li>⏱ <strong>Timed Challenges:</strong> Test your depth and speed in the Scriptures.</li>
-          <li>🚀 <strong>Click Submit</strong> at any time to complete your test.</li>
-          <li>😄 <strong>Share, compete and have fun</strong> with someone today.</li>
-          <li>🖥 <strong>Screenshot and send</strong> your score to: <strong>+234-901-366-7552</strong></li>
+          <li>⚡ <strong>Both Stages:</strong> 200 Questions Challenge (60 Mins).</li>
+          <li>📱 <strong>Screenshot and send</strong> score to: <strong>+234-901-366-7552</strong></li>
         </ul>
       </div>
-      <button class="start-btn" onclick="startQuiz(1)">START STAGE 1</button>
+
+      <div class="mode-buttons">
+        <button class="start-btn" onclick="startQuiz('1')">START STAGE 1</button>
+        <button class="start-btn btn-stage2" onclick="startQuiz('2')">START STAGE 2</button>
+        <button class="start-btn btn-both" onclick="startQuiz('both')">PLAY BOTH STAGES (1 & 2)</button>
+      </div>
     </div>
 
     <!-- Quiz Screen -->
@@ -376,17 +435,17 @@
 
     <!-- Results Screen -->
     <div class="score-screen" id="score-screen">
-      <h2 id="stage-result-title">Stage 1 Completed! 🎉</h2>
+      <h2 id="stage-result-title">Quiz Completed! 🎉</h2>
       <p style="margin-top: 10px; font-size: 1.1rem;">Thank you for playing ZionLife Bible Quiz!</p>
       
       <div class="score-badge" id="final-score">0 / 100</div>
 
-      <p id="feedback-text" style="font-size: 1.2rem; font-weight: 600;"></p>
+      <p id="feedback-text" style="font-size: 1.2rem; font-weight: 600; line-height: 1.4; padding: 0 10px;"></p>
       <p style="margin-top: 15px; color: #ffea00;">App Designed & Developed By <strong>EVANG.THANKGOD OKODUWA</strong></p>
 
       <div id="action-buttons-container">
         <button class="action-btn" onclick="restartQuiz()">Try Again</button>
-        <button class="action-btn stage2-btn" id="next-stage-btn" onclick="startQuiz(2)" style="display:none;">Proceed to Stage 2 🔥</button>
+        <button class="action-btn stage2-btn" id="next-stage-btn" onclick="startQuiz('2')" style="display:none;">Proceed to Stage 2 🔥</button>
       </div>
     </div>
   </div>
@@ -603,29 +662,28 @@
     // Custom Creator Question
     const creatorQuestion = {
       q: "The 'ZIONLIFE BIBLE QUIZ APP' was developed by who?",
-      options: ["Elon Musk", "Mark Zuckerberg", "ThankGod Okoduwa", "Bill Gate"],
+      options: ["Elon Musk", "Mark Zuckerberg", "ThankGod Okoduwa", "Bill Gates"],
       answer: 2
     };
 
+    let playerName = "Player";
     let questions = [];
     let currentQuestionIndex = 0;
     let userAnswers = [];
-    let currentStage = 1;
-    let timeLeft = 30 * 60; // 30 mins
+    let currentStage = '1';
+    let timeLeft = 30 * 60; // default 30 mins
     let timerInterval = null;
 
-    // Helper function to shuffle options and track the correct answer index
+    // Helper function to shuffle options and track correct answer index
     function shuffleOptions(item) {
       const originalCorrectOption = item.options[item.answer];
       let mappedOptions = item.options.map((opt) => opt);
       
-      // Shuffle array
       for (let i = mappedOptions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [mappedOptions[i], mappedOptions[j]] = [mappedOptions[j], mappedOptions[i]];
       }
 
-      // Find new index of the correct answer
       const newAnswerIndex = mappedOptions.indexOf(originalCorrectOption);
 
       return {
@@ -635,36 +693,58 @@
       };
     }
 
-    // Start Quiz Execution for designated stage
-    function startQuiz(stage = 1) {
+    // Start Quiz Execution
+    function startQuiz(stage = '1') {
+      const nameInput = document.getElementById("player-name").value.trim();
+      if (!nameInput && stage !== '2') { // Stage 2 button on results screen re-uses entered name
+        if (playerName === "Player") {
+          alert("Please enter your name before starting the game!");
+          return;
+        }
+      } else if (nameInput) {
+        playerName = nameInput;
+      }
+
       currentStage = stage;
       
-      // Hide Start Screen / Score Screen & Show Quiz Screen
+      // Screen transition
       document.getElementById("start-screen").style.display = "none";
       document.getElementById("score-screen").style.display = "none";
       document.getElementById("quiz-screen").style.display = "block";
 
-      document.getElementById("current-stage-tag").innerText = `STAGE ${currentStage}`;
+      let baseArray = [];
+      let totalTimeMinutes = 30;
 
-      let baseArray = (currentStage === 1) ? baseQuestionsStage1 : baseQuestionsStage2;
+      if (currentStage === '1') {
+        document.getElementById("current-stage-tag").innerText = "STAGE 1";
+        baseArray = [...baseQuestionsStage1];
+        totalTimeMinutes = 30;
+      } else if (currentStage === '2') {
+        document.getElementById("current-stage-tag").innerText = "STAGE 2";
+        baseArray = [...baseQuestionsStage2];
+        totalTimeMinutes = 30;
+      } else if (currentStage === 'both') {
+        document.getElementById("current-stage-tag").innerText = "STAGE 1 & 2 (COMBINED)";
+        baseArray = [...baseQuestionsStage1, ...baseQuestionsStage2];
+        totalTimeMinutes = 60;
+      }
 
-      // Both stages: 100 Questions, 30 Minutes
-      let shuffledBase = [...baseArray]
+      // Prepare & shuffle questions
+      let shuffledBase = baseArray
         .sort(() => Math.random() - 0.5)
-        .slice(0, 99)
+        .slice(0, baseArray.length - 1)
         .map(q => shuffleOptions(q));
 
       const shuffledCreatorQ = shuffleOptions(creatorQuestion);
-      const randomPos = Math.floor(Math.random() * 100);
+      const randomPos = Math.floor(Math.random() * shuffledBase.length);
       shuffledBase.splice(randomPos, 0, shuffledCreatorQ);
       
       questions = shuffledBase;
-      timeLeft = 30 * 60; // 30 mins
+      timeLeft = totalTimeMinutes * 60;
 
       userAnswers = new Array(questions.length).fill(null);
       currentQuestionIndex = 0;
 
-      // Start Countdown Timer
       startTimer();
       showQuestion();
     }
@@ -706,7 +786,6 @@
         btn.className = "option-btn";
         btn.innerText = `${String.fromCharCode(65 + idx)}. ${opt}`;
 
-        // Feedback styling if user has already made a selection
         if (selectedAns !== null) {
           btn.disabled = true;
           if (idx === qData.answer) {
@@ -721,7 +800,6 @@
         optionsContainer.appendChild(btn);
       });
 
-      // Handle Previous/Next Visibility
       document.getElementById("prev-btn").style.visibility = currentQuestionIndex === 0 ? "hidden" : "visible";
       document.getElementById("next-btn").style.visibility = currentQuestionIndex === questions.length - 1 ? "hidden" : "visible";
 
@@ -753,14 +831,14 @@
     // Confirm Submission
     function confirmSubmit() {
       const answeredCount = userAnswers.filter(a => a !== null).length;
-      if (confirm(`You have answered ${answeredCount} of ${questions.length} questions in Stage ${currentStage}. Are you sure you want to submit now?`)) {
+      let stageLabel = (currentStage === 'both') ? "Both Stages" : `Stage ${currentStage}`;
+      if (confirm(`Hello ${playerName}, you have answered ${answeredCount} of ${questions.length} questions in ${stageLabel}. Are you sure you want to submit now?`)) {
         submitQuiz();
       }
     }
 
-    // Final Quiz Submission & Timer Stop
+    // Final Quiz Submission & Personalized Feedback
     function submitQuiz() {
-      // STOP TIMER IMMEDIATELY
       clearInterval(timerInterval);
 
       let score = 0;
@@ -771,31 +849,37 @@
       document.getElementById("quiz-screen").style.display = "none";
       document.getElementById("score-screen").style.display = "block";
 
-      document.getElementById("stage-result-title").innerText = `Stage ${currentStage} Completed! 🎉`;
+      let titleStage = (currentStage === 'both') ? "Stage 1 & 2 Completed!" : `Stage ${currentStage} Completed!`;
+      document.getElementById("stage-result-title").innerText = `${titleStage} 🎉`;
       document.getElementById("final-score").innerText = `${score} / ${questions.length}`;
 
       let feedback = "";
       const percent = (score / questions.length) * 100;
 
-      if (currentStage === 1) {
-        if (percent >= 90) feedback = "🌟 Outstanding! You crushed Stage 1. You're ready for the Master Stage!";
-        else if (percent >= 70) feedback = "👏 Great job! Solid understanding of the Word!";
-        else if (percent >= 50) feedback = "👍 Good effort! Keep building your Bible knowledge!";
-        else feedback = "📖 Keep studying the Scriptures and give it another try!";
+      if (currentStage === '1') {
+        if (percent >= 90) feedback = `🌟 Outstanding performance, <strong>${playerName}</strong>! You crushed Stage 1. You're ready for the Master Stage!`;
+        else if (percent >= 70) feedback = `👏 Great job, <strong>${playerName}</strong>! Solid understanding of the Word!`;
+        else if (percent >= 50) feedback = `👍 Good effort, <strong>${playerName}</strong>! Keep building your Bible knowledge!`;
+        else feedback = `📖 Keep studying the Scriptures, <strong>${playerName}</strong>, and give it another try!`;
 
-        // Show stage 2 button
         document.getElementById("next-stage-btn").style.display = "inline-block";
-      } else {
-        if (percent >= 90) feedback = "👑 UNSTOPPABLE! You are a Grandmaster Bible Scholar!";
-        else if (percent >= 70) feedback = "🔥 Impressive! Magnificent depth of scripture mastery!";
-        else if (percent >= 50) feedback = "⚡ Solid performance on these 100 deep-dive questions!";
-        else feedback = "📚 Stage 2 is tough! Re-read the deeper passages and try again!";
+      } else if (currentStage === '2') {
+        if (percent >= 90) feedback = `👑 UNSTOPPABLE, <strong>${playerName}</strong>! You are a Grandmaster Bible Scholar!`;
+        else if (percent >= 70) feedback = `🔥 Impressive, <strong>${playerName}</strong>! Magnificent depth of scripture mastery!`;
+        else if (percent >= 50) feedback = `⚡ Solid performance, <strong>${playerName}</strong>, on these 100 deep-dive questions!`;
+        else feedback = `📚 Stage 2 is tough, <strong>${playerName}</strong>! Re-read the deeper passages and try again!`;
 
-        // Hide stage 2 button since stage 2 is complete
+        document.getElementById("next-stage-btn").style.display = "none";
+      } else {
+        if (percent >= 90) feedback = `🏆 LEGENDARY BIBLE WARRIOR, <strong>${playerName}</strong>! You conquered all 200 questions with exceptional accuracy!`;
+        else if (percent >= 70) feedback = `🔥 Phenomenal endurance and knowledge, <strong>${playerName}</strong>! You did great across both stages!`;
+        else if (percent >= 50) feedback = `⚡ Great attempt, <strong>${playerName}</strong>! Completing 200 questions shows real dedication!`;
+        else feedback = `📖 Good hustle, <strong>${playerName}</strong>! Keep diving deeper into the Word and try again!`;
+
         document.getElementById("next-stage-btn").style.display = "none";
       }
 
-      document.getElementById("feedback-text").innerText = feedback;
+      document.getElementById("feedback-text").innerHTML = feedback;
     }
 
     // Restart Application back to start screen
