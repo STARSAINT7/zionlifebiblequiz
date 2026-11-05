@@ -368,13 +368,38 @@
         font-size: 0.85rem;
       }
     }
+
+    /* In-page dialog (works even where the browser blocks alert/confirm pop-ups) */
+    .dialog-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .dialog-box {
+      background: #2b1240;
+      border: 2px solid #00f2fe;
+      border-radius: 16px;
+      padding: 25px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+    .dialog-box p { margin: 0 0 20px 0; font-size: 1.05rem; line-height: 1.5; }
+    .dialog-actions { display: flex; gap: 10px; justify-content: center; }
   </style>
 </head>
 <body>
 
   <div class="app-card">
     <!-- Pop-Up Header -->
-    <div class="popup-banner">✨📖BY EVANG.THANKGOD OKODUWA📖✨</div>
+    <div class="popup-banner">✨📖DEVELOPED BY EVANG.THANKGOD OKODUWA📖✨</div>
 
     <header>
       <h1>Bible Quizbook</h1>
@@ -450,7 +475,16 @@
     </div>
   </div>
 
-  <script>
+      <div id="dialog-overlay" class="dialog-overlay">
+    <div class="dialog-box">
+      <p id="dialog-message"></p>
+      <div class="dialog-actions">
+        <button id="dialog-no" class="btn btn-prev">Cancel</button>
+        <button id="dialog-yes" class="btn btn-submit">OK</button>
+      </div>
+    </div>
+  </div>
+<script>
     // Raw Base Questions Bank - STAGE 1 (100 Questions)
     const baseQuestionsStage1 = [
       { q: "What is the first book of the Bible?", options: ["Exodus", "Genesis", "Leviticus", "Numbers"], answer: 1 },
@@ -693,12 +727,25 @@
       };
     }
 
+    // In-page dialog
+    function showDialog(message, onConfirm, confirmText) {
+      const overlay = document.getElementById("dialog-overlay");
+      const yes = document.getElementById("dialog-yes");
+      const no = document.getElementById("dialog-no");
+      document.getElementById("dialog-message").textContent = message;
+      no.style.display = onConfirm ? "inline-block" : "none";
+      yes.textContent = confirmText || "OK";
+      overlay.style.display = "flex";
+      yes.onclick = () => { overlay.style.display = "none"; if (onConfirm) onConfirm(); };
+      no.onclick = () => { overlay.style.display = "none"; };
+    }
+
     // Start Quiz Execution
     function startQuiz(stage = '1') {
       const nameInput = document.getElementById("player-name").value.trim();
       if (!nameInput && stage !== '2') { // Stage 2 button on results screen re-uses entered name
         if (playerName === "Player") {
-          alert("Please enter your name before starting the game!");
+          showDialog("Please enter your name before proceeding!");
           return;
         }
       } else if (nameInput) {
